@@ -1,7 +1,17 @@
+import { useSession, getSession } from "next-auth/react"
 import Head from 'next/head'
 import Header from '../components/Header'
+import Login from '../components/Login';
 
 export default function Home() {
+  //Grabs the current session of the user
+  const {data:session} = useSession();
+  console.log(session);
+  //If there is no user session, we return the login component 
+  if (!session){
+    return <Login/>;
+  }
+
   return (
     <div>
       <Head>
@@ -19,4 +29,12 @@ export default function Home() {
       </main>
     </div>
   )
+}
+
+export async function getServerSideProps(ctx) {
+  return {
+    props: {
+      session: await getSession(ctx)
+    }
+  }
 }
