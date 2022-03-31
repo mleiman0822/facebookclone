@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/outline"
 import { VideoCameraIcon } from '@heroicons/react/solid';
 import { useRef, useState } from 'react';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import firebase from 'firebase';
 import { redirect } from 'next/dist/server/api-utils';
 
@@ -27,7 +27,29 @@ function InputBox() {
             email: session.user.email,
             image: session.user.image,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        });
+        }).then(doc => {
+            if(imageToPost){
+                const uploadTask = storage
+                .ref(`posts/${doc.id}`)
+                .putString(imageToPost, 'data_url')
+                
+                removeImage();
+
+                uploadTask.on("state_change", 
+                null, 
+                error => console.error(error), 
+                () => {
+                    //When upload completes
+                    storage.ref(`posts/${doc.id}`).getDownloadURL().then(url => {
+                        db.collection('posts').doc(doc.id).set({
+                            postImage: url
+                        }, 
+                        { merge: true }
+                        );
+                    })
+                })
+            }
+        })
 
         inputRef.current.value = "";
     };
@@ -68,8 +90,10 @@ function InputBox() {
                  </button>
             </form>
             {imageToPost && (
-                <div className='flex flex-col'>
-                    <img onClick={removeImage} className='h-10 object-contain cursor-pointer' src={imageToPost} alt="" />
+                <div className='flex flex-col filter
+                hover:brightness-110 transition duration-150 transform hover:scale-105
+                cursor-pointer'>
+                    <img onClick={removeImage} className='h-10 object-contain' src={imageToPost} alt="" />
                 </div>
             )}
         </div>
