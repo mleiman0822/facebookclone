@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import FacebookProvider from "next-auth/providers/facebook"
+import { theme } from "../../../tailwind.config"
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -10,4 +11,6 @@ export default NextAuth({
     }),
     // ...add more providers here
   ],
+  secret: process.env.FACEBOOK_CLIENT_SECRET,
+
 })
