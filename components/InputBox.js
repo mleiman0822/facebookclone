@@ -44,7 +44,8 @@ function InputBox() {
                         db.collection('posts').doc(doc.id).set({
                             postImage: url
                         }, 
-                        { merge: true }
+                        { 
+                            merge: true }
                         );
                     })
                 })

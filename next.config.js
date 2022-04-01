@@ -12,7 +12,7 @@ const nextConfig = {
       "upload.wikimedia.org",
       "variety.com",
       "hbomax-images.warnermediacdn.com",
-      
+      "nypost.com"      
     ]
   }
 }
